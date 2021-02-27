@@ -12,6 +12,5 @@ $str = array(
 
     'msg'=>$msg,
     'isLogin'=>$isLogin,
-
 );
 echo json_encode($str);
