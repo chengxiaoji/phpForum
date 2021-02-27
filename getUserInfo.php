@@ -9,7 +9,6 @@ else {
     $isLogin=false;
 }
 $str = array(
-
     'msg'=>$msg,
     'isLogin'=>$isLogin,
 );

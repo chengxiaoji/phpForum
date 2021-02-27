@@ -7,7 +7,6 @@ $password= trim($data['pass']);
 $email=trim($data['email']);
 $last_login=null;
 $date_joined=date('Y-m-d H:i:s',time());
-
 $sql = "INSERT INTO forum.forum_user VALUES(null,'$username','$password','$email','$last_login','$date_joined',0,1,0)";
 $result = mysqli_query($conn,$sql);
 if ($result==null)

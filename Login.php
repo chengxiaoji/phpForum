@@ -23,6 +23,5 @@ $str = array(
 
     'msg'=>$msg,
     'code'=>$code,
-
 );
 echo json_encode($str);
