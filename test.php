@@ -1,28 +1,31 @@
 <?php
-$data = file_get_contents("php://input");
-$data = json_decode($data,true);
-$username= trim($data['name']);
-$password= trim($data['pass']);
 
-//创建连接数据库
-$conn = mysqli_connect("121.199.15.46","forum","forum","forum");
-if(!$conn){
-    die("连接失败：" . mysqli_connect_error());
-}
-$sql = "select * from forum.forum_user where username='$username' and password='$password'";
-$result = mysqli_query($conn,$sql);
-$row = mysqli_fetch_assoc($result);
-if ($row==null)
-{
-    $msg="找不到该用户！";
-}
-else{
-   session_start();
-   $_SESSION['userInfo']=$username;
-}
-$str = array(
+$info = getUserInfo();
+setCookies($info);
 
-    'msg'=>$msg,
+function setCookies($info){
+    if(!$info['isSetCookies']){
+        setcookie("userInfoName", $info['username'], time()+60*60*24*30);
+        setcookie("userInfoPass", $info['password'], time()+60*60*24*30);
+    }
+}
+function getUserInfo(){
+        $info=array(
+            'username'=>'',
+            'password'=>'',
+            'isSetCookies'=>false
+        );
+        if(isset($_COOKIE['userInfoName'])){
+            $info['username']=$_COOKIE["userInfoName"];
+            $info['password']=$_COOKIE["userInfoPass"];
+        }
+        else{
+            $data = file_get_contents("php://input");
+            $data = json_decode($data, true);
 
-);
-echo json_encode($str);
+            $info['username'] = trim($data['name']);
+            $info['password'] = trim($data['pass']);
+            $info['isSetCookies'] = $data['isSetCookies'];
+        }
+        return $info;
+    }
