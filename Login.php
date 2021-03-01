@@ -20,7 +20,6 @@ else{
     $_SESSION['userInfo']=$username;
 }
 $str = array(
-
     'msg'=>$msg,
     'code'=>$code,
 );

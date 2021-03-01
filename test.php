@@ -32,7 +32,6 @@ function getUserInfo(){
 }
 function checkInfo($info)
 {
-
     $str = array
     (
         'code' => '',
