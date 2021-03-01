@@ -21,5 +21,4 @@ class Connection{
             echo "ERROR: ".$e->getMessage();
         }
     }
-
 }
