@@ -1,6 +1,24 @@
 <?php
-//创建连接数据库
-$conn = mysqli_connect("121.199.15.46","forum","forum","forum");
-if(!$conn){
-    die("连接失败：" . mysqli_connect_error());
+//$conn = mysqli_connect("101.37.17.251", "forum", "forum", "forum");
+//if (!$conn) {
+//    die("连接失败: " . mysqli_connect_error());
+//}
+define('SERVER', '121.199.15.46');
+define('USER', 'forum');
+define('PASS', 'forum');
+define('DB', 'forum');
+class Connection{
+    var $mysqli = null;
+    function __construct(){
+        try{
+            if(!$this->mysqli){
+                $this->mysqli = new MySQLi(SERVER, USER, PASS, DB);
+                if(!$this->mysqli)
+                    throw new Exception('Could not create connection using MySQLi', 'NO_CONNECTION');
+            }
+        }
+        catch(Exception $e){
+            echo "ERROR: ".$e->getMessage();
+        }
+    }
 }
