@@ -1,14 +1,48 @@
 <?php
-
+require 'components/MysqlConnection.php';
 $info = getUserInfo();
 setCookies($info);
 checkInfo($info);
+if(checkLogin($info)){
+    setCookies($info);
+    setSessions($info);
+    updateLogin($info);
+    echoSuccess();
+}else
+{
+    exit();
+}
+
+function echoSuccess(){
+    $str = array
+    (
+        'code' => 200,
+        'msg' => '登录成功！',
+    );
+    echo json_encode($str, 256);
+}
+
+function updateLogin($info){
+    $conn = new Connection();
+    $now = date('Y-m-d H:i:s', time());
+    $sql = "update forum.forum_user set last_login= '$now' where username= ? ";
+    $stmt = $conn->mysqli->prepare($sql);
+    $stmt->bind_param("s", $info['username']);
+    $stmt->execute();
+}
+
 function setCookies($info){
-    if(!$info['isSetCookies']){
+    if($info['isSetCookies']){
         setcookie("userInfoName", $info['username'], time()+60*60*24*30);
         setcookie("userInfoPass", $info['password'], time()+60*60*24*30);
     }
 }
+
+function setSessions($info){
+            session_start();
+            $_SESSION['username'] = $info['username'];
+}
+
 function getUserInfo(){
         $info=array(
             'username'=>'',
@@ -30,6 +64,7 @@ function getUserInfo(){
         return $info;
 
 }
+
 function checkInfo($info)
 {
     $str = array
@@ -49,10 +84,7 @@ function checkInfo($info)
     } elseif ($info['password'] == null) {
         $str['code'] = 410;
         $str['msg'] = "密码为空";
-    } elseif (!preg_match('/^.{6,20}$/', $info['password'])) {
-        $str['code'] = 412;
-        $str['msg'] = "密码长度最短为六位，最长为20位！";
-    } else {
+    }  else {
         $str['code'] = 200;
         $str['msg'] = "验证通过";
     }
@@ -61,3 +93,63 @@ function checkInfo($info)
         exit();
     }
 }
+
+function checkLogin($info){
+
+    $str = array
+    (
+        'code' => '',
+        'msg' => '',
+    );
+    if(selectUsername($info)){
+        if(selectUsernameAndPassword($info)){
+            $str['code']=200;
+            $str['msg']='验证成功！';
+        }
+        else{
+            $str['code']=420;
+            $str['msg']='密码不正确！';
+        }
+    }
+    else{
+        $str['code']=421;
+        $str['msg']='账号不存在！';
+    }
+    if($str['code']!=200){
+        echo json_encode($str, 256);
+        return false;
+    }
+    else{
+        return true;
+    }
+
+}
+
+function selectUsername($info){
+    $conn = new Connection();
+    $sql = "select * from forum.forum_user where username = ? ";
+    $stmt = $conn->mysqli->prepare($sql);
+    $stmt->bind_param("s", $info['username']);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    if ($result->num_rows > 0) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+function selectUsernameAndPassword($info){
+    $conn = new Connection();
+    $sql = "select * from forum.forum_user where username = ? and password= ?  ";
+    $stmt = $conn->mysqli->prepare($sql);
+    $stmt->bind_param("ss", $info['username'], $info['password']);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    if ($result->num_rows > 0) {
+        return true;
+    } else {
+        return false;
+    }
+}
+

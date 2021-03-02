@@ -1,7 +1,7 @@
 <?php
 session_start();
-if(isset($_SESSION['userInfo'])){
-    $msg=$_SESSION['userInfo'];
+if(isset($_SESSION['username'])){
+    $msg=$_SESSION['username'];
     $isLogin=true;
 }
 else {
