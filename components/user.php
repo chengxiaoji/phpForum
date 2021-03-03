@@ -114,7 +114,6 @@ return true;
 return false;
 }
 }
-
 //register
 function getRegisterInfo()
 {
