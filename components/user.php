@@ -64,7 +64,7 @@ exit();
 statusCode(411, "密码长度不符合要求");
 exit();
 } else {
-statusCode(200, "验证通过");
+//statusCode(200, "验证通过");
 }
 }
 
@@ -83,10 +83,8 @@ statusCode(421, "账号不存在");
 exit();
 }
 }
-
 function selectUsername($info)
 {
-
 $conn = new Connection();
 $sql = "select * from forum.forum_user where username = ? ";
 $stmt = $conn->mysqli->prepare($sql);
@@ -99,7 +97,6 @@ return true;
 return false;
 }
 }
-
 function selectUsernameAndPassword($info)
 {
 $conn = new Connection();
@@ -156,30 +153,63 @@ exit();
 statusCode(420, "邮箱格式不符合要求");
 exit();
 } else {
-statusCode(200, "验证通过");
+//statusCode(200, "验证通过");
 }
 }
 
 function register($info)
 {
-$conn = new Connection();
-$sql = "INSERT INTO forum.forum_user VALUES (null, ? , ? , ? ,null, ? ,0,1,0)";
-$stmt = $conn->mysqli->prepare($sql);
-$now = date('Y-m-d H:i:s', time());
-$stmt->bind_param("ssss", $info['username'], $info['password'], $info['email'], $now);
-if ($stmt->execute()) {
-statusCode(200, '注册成功!');
-} else {
-statusCode(450, '注册失败!');
-}
+    $conn = new Connection();
+
+    $sql = "INSERT INTO forum.forum_user VALUES (null, ? , ? , ? ,null, ? ,0,1,0);";
+    $stmt = $conn->mysqli->prepare($sql);
+    $now = date('Y-m-d H:i:s', time());
+    $stmt->bind_param("ssss", $info['username'], $info['password'], $info['email'], $now);
+    if ($stmt->execute()) {
+        statusCode(200, '注册成功');
+    } else {
+        statusCode(450, '注册失败');
+    }
+
+//    $sql = "INSERT INTO forum.forum_userInfo VALUES (null, ? , null , null ,null, null ,null,null,null);";
+    $userID=getID($info['username']);
+    $avatar='http://forum.shaobaitao.cn/avatar/nut.png';
+    $sql = "insert into forum.forum_userInfo values ( null , ? , null , null , null , null , ? , null , null ) ";
+    $stmt = $conn->mysqli->prepare($sql);
+    $stmt->bind_param("is", $userID,$avatar);
+    $stmt->execute();
+
+
+
 }
 
 function statusCode($code, $msg)
 {
 $str = array
 (
+
 'code' => $code,
 'msg' => $msg,
 );
 echo json_encode($str, 256);
+}
+function getUsername($id){
+    $conn = new Connection();
+    $sql = "select username from forum.forum_user where id= ? ";
+    $stmt = $conn->mysqli->prepare($sql);
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $row = $result->fetch_assoc();
+    return $row['username'];
+}
+function getID($name){
+    $conn = new Connection();
+    $sql = "select id from forum.forum_user where username= ? ";
+    $stmt = $conn->mysqli->prepare($sql);
+    $stmt->bind_param("s", $name);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $row = $result->fetch_assoc();
+    return $row['id'];
 }
