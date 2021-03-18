@@ -173,7 +173,7 @@ function register($info)
 
 //    $sql = "INSERT INTO forum.forum_userInfo VALUES (null, ? , null , null ,null, null ,null,null,null);";
     $userID=getID($info['username']);
-    $avatar='http://forum.shaobaitao.cn/avatar/nut.png';
+    $avatar='http://forum.chengxiaoji.cn/avatar/nut.png';
     $sql = "insert into forum.forum_userInfo values ( null , ? , null , null , null , null , ? , null , null ) ";
     $stmt = $conn->mysqli->prepare($sql);
     $stmt->bind_param("is", $userID,$avatar);
@@ -212,4 +212,13 @@ function getID($name){
     $result = $stmt->get_result();
     $row = $result->fetch_assoc();
     return $row['id'];
+}
+
+function uploadAvatar($id,$url){
+    $conn = new Connection();
+    $sql = "UPDATE forum.forum_userInfo SET headPortrait = ?  where userID = ? ";
+    $stmt = $conn->mysqli->prepare($sql);
+    $stmt->bind_param("si", $url,$id);
+    $stmt->execute();
+    echo 11111;
 }
