@@ -173,7 +173,7 @@ function register($info)
 
 //    $sql = "INSERT INTO forum.forum_userInfo VALUES (null, ? , null , null ,null, null ,null,null,null);";
     $userID=getID($info['username']);
-    $avatar='http://forum.chengxiaoji.cn/avatar/nut.png';
+    $avatar='http://forum.chengxiaoji.cn/Forum_api/avatar/60536208ebc5c.jpg';
     $sql = "insert into forum.forum_userInfo values ( null , ? , null , null , null , null , ? , null , null ) ";
     $stmt = $conn->mysqli->prepare($sql);
     $stmt->bind_param("is", $userID,$avatar);
